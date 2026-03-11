@@ -11,6 +11,10 @@ class CustomError extends Error {
     static BadRequest(message = "Bad Request") {
         return new CustomError(message, 400);
     }
+
+       static InternalServer(message, errors=[]) {
+        return new CustomError(message,errors, 500);
+    }
 }
 
 module.exports = CustomError;
