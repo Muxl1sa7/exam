@@ -1,24 +1,63 @@
-const Brand = require("../schema/brand.schema");
-const CustomError = require("../error/custom-error");
-const getAllBrands = async (req, res, next) => {
+const Brand = require("../models/brand.model");
+
+const addBrand = async (req, res, next) => {
   try {
-    const brands = await Brand.find();
-    res.json(brands);
+
+    const brand = await Brand.create({
+      ...req.body,
+      createdBy: req.user.id
+    });
+
+    res.json(brand);
+
   } catch (error) {
     next(error);
   }
 };
 
-const addBrand = async (req, res, next) => {
+const getAllBrands = async (req, res, next) => {
   try {
-    const newBrand = await Brand.create(req.body);
-    res.status(201).json(newBrand);
+
+    const brands = await Brand.find().populate("createdBy", "userName email");
+
+    res.json(brands);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateBrand = async (req, res, next) => {
+  try {
+
+    const brand = await Brand.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    res.json(brand);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteBrand = async (req, res, next) => {
+  try {
+
+    await Brand.findByIdAndDelete(req.params.id);
+
+    res.json({ message: "Brand deleted successfully" });
+
   } catch (error) {
     next(error);
   }
 };
 
 module.exports = {
+  addBrand,
   getAllBrands,
-  addBrand
+  updateBrand,
+  deleteBrand
 };

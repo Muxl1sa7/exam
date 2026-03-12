@@ -1,25 +1,29 @@
-const Brand = require("../schema/brand.schema");
-const CustomError = require("../error/custom-error");
+const { Schema, model } = require("mongoose");
 
-const getAllBrands = async (req, res, next) => {
-  try {
-    const brands = await Brand.find();
-    res.json(brands);
-  } catch (error) {
-    next(error);
+const BrandSchema = new Schema(
+  {
+    brandName: {
+      type: String,
+      unique: true,
+      required: true
+    },
+
+    description: {
+      type: String
+    },
+
+    logoUrl: {
+      type: String
+    },
+
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }
+  },
+  {
+    timestamps: true
   }
-};
+);
 
-const addBrand = async (req, res, next) => {
-  try {
-    const newBrand = await Brand.create(req.body);
-    res.status(201).json(newBrand);
-  } catch (error) {
-    next(error);
-  }
-};
-
-module.exports = {
-  getAllBrands,
-  addBrand
-};
+module.exports = model("Brand", BrandSchema);

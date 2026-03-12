@@ -1,5 +1,5 @@
 const carValidate = require("../validator/car.validator");
-const CustomError = require("../error/custom-error");
+const CustomError = require("../error/custom.error");
 
 module.exports = function (req, res, next) {
 

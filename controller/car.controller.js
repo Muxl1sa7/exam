@@ -1,31 +1,108 @@
-const Car = require("../schema/car.schema");
-const CustomError = require("../error/custom-error");
+const Car = require("../models/car.model");
+const Brand = require("../models/brand.model");
+const carValidate = require("../validator/car.validator")
+const addCar = async(req,res,next)=>{
+  try{
 
-const getCarsByBrand = async (req, res, next) => {
-  try {
-    const { brandId } = req.params;
+    const brand = await Brand.findById(req.body.brandInfo);
 
-    const cars = await Car.find({ brandInfo: brandId }).populate(
-      "brandInfo",
-      "brandName logoUrl"
-    );
+    if(!brand){
+      return res.status(404).json({message:"Brand not found"});
+    }
+
+    const car = await Car.create({
+      ...req.body,
+      createdBy:req.user.id
+    });
+
+    res.json(car);
+
+  }catch(err){
+    next(err);
+  }
+};
+
+const getAllCars = async(req,res,next)=>{
+  try{
+
+    const cars = await Car.find().populate("brandInfo","brandName");
 
     res.json(cars);
-  } catch (error) {
-    next(error);
+
+  }catch(err){
+    next(err);
   }
 };
 
-const addCar = async (req, res, next) => {
-  try {
-    const newCar = await Car.create(req.body);
-    res.status(201).json(newCar);
-  } catch (error) {
-    next(error);
+const getCarsByBrand = async (req,res,next)=>{
+try{
+
+const {brandId} = req.params
+
+const cars = await Car.find({brandInfo: brandId})
+.populate("brandInfo","brandName")
+
+res.json(cars)
+
+}catch(error){
+next(error)
+}
+}
+
+const getOneCar = async(req,res,next)=>{
+  try{
+
+    const car = await Car.findById(req.params.id)
+    .populate("brandInfo");
+
+    if(!car){
+      return res.status(404).json({message:"Car not found"});
+    }
+
+    res.json(car);
+
+  }catch(err){
+    next(err);
   }
 };
 
-module.exports = {
+const updateCar = async(req,res,next)=>{
+  try{
+
+    const car = await Car.findByIdAndUpdate(req.params.id,req.body,{new:true});
+
+    if(!car){
+      return res.status(404).json({message:"Car not found"});
+    }
+
+    res.json(car);
+
+  }catch(err){
+    next(err);
+  }
+};
+
+const deleteCar = async(req,res,next)=>{
+  try{
+
+    const car = await Car.findByIdAndDelete(req.params.id);
+
+    if(!car){
+      return res.status(404).json({message:"Car not found"});
+    }
+
+    res.json({message:"deleted"});
+
+  }catch(err){
+    next(err);
+  }
+};
+
+module.exports={
+  addCar,
+  getAllCars,
   getCarsByBrand,
-  addCar
-};
+  getOneCar,
+  updateCar,
+  deleteCar
+}

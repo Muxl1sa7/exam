@@ -1,13 +1,6 @@
-// module.exports = (err, req, res, next) => {
-//   console.log("ERROR DEBUG:", err);
-
-//   res.status(err.status || 500).json({
-//     message: err.message || "Server error"
-//   });
-// };
 
 
-const CustomError = require("../error/custom-error");
+const CustomError = require("../error/custom.error");
 
 module.exports = function (err, req, res, next) {
   try {

@@ -1,15 +1,18 @@
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
-const access_token =(payload)=>{
-    return jwt.sign(payload,process.env.SECRET_KEY,{expiresIn:"15m"})
-}
+const accessToken = (payload) => {
+  return jwt.sign(payload, process.env.ACCESS_SECRET_KEY || "accesssecret123", {
+    expiresIn: "15m",
+  });
+};
 
+const refreshToken = (payload) => {
+  return jwt.sign(payload, process.env.REFRESH_SECRET_KEY || "refreshsecret123", {
+    expiresIn: "7d",
+  });
+};
 
-const refresh_token =(payload)=>{
-    return jwt.sign(payload,process.env.REFRESH.SECRET_KEY,{expiresIn:"7d"})
-}
-
-module.exports={
-    access_token,
-    refresh_token
-}
+module.exports = {
+  accessToken,
+  refreshToken,
+};
